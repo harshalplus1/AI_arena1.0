@@ -1,0 +1,228 @@
+#!/usr/bin/env python
+# coding: utf-8
+
+# In[1]:
+
+
+import numpy as np
+import cv2
+import mediapipe as mp
+from Angle import calculate_angle
+import subprocess
+import sys
+
+
+# In[2]:
+
+
+mp_drawing = mp.solutions.drawing_utils
+
+
+# In[3]:
+
+
+def jumpingjacksutils(frame):
+    # Convert frame to RGB format
+    frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+
+    # Process frame with MediaPipe Pose model
+    results = pose.process(frame_rgb)
+    res = results
+    # Check if any poses are detected
+    if results.pose_landmarks:
+        # Get landmark coordinates
+        landmarks = results.pose_landmarks.landmark
+        results = holistic.process(frame_rgb)
+        w, h = 640, 480
+        # Specify LEFT shoulder, elbow, and hip landmark indices
+        l_shoulder = landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value]
+        l_elbow = landmarks[mp_pose.PoseLandmark.LEFT_ELBOW.value]
+        l_hip = landmarks[mp_pose.PoseLandmark.LEFT_HIP.value]
+        lsh = [
+            landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value].x,
+            landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value].y,
+        ]
+        lel = [
+            landmarks[mp_pose.PoseLandmark.LEFT_ELBOW.value].x,
+            landmarks[mp_pose.PoseLandmark.LEFT_ELBOW.value].y,
+        ]
+        lhip = [
+            landmarks[mp_pose.PoseLandmark.LEFT_HIP.value].x,
+            landmarks[mp_pose.PoseLandmark.LEFT_HIP.value].y,
+        ]
+        # Specify RIGHT shoulder, elbow, and hip landmark indices
+        r_shoulder = landmarks[mp_pose.PoseLandmark.RIGHT_SHOULDER.value]
+        r_elbow = landmarks[mp_pose.PoseLandmark.RIGHT_ELBOW.value]
+        r_hip = landmarks[mp_pose.PoseLandmark.RIGHT_HIP.value]
+        rsh = [
+            landmarks[mp_pose.PoseLandmark.RIGHT_SHOULDER.value].x,
+            landmarks[mp_pose.PoseLandmark.RIGHT_SHOULDER.value].y,
+        ]
+        rel = [
+            landmarks[mp_pose.PoseLandmark.RIGHT_ELBOW.value].x,
+            landmarks[mp_pose.PoseLandmark.RIGHT_ELBOW.value].y,
+        ]
+        rhip = [
+            landmarks[mp_pose.PoseLandmark.RIGHT_HIP.value].x,
+            landmarks[mp_pose.PoseLandmark.RIGHT_HIP.value].y,
+        ]
+        # Convert LEFT landmark positions to pixel coordinates
+        lshoulder_x, lshoulder_y = int(l_shoulder.x * w), int(l_shoulder.y * h)
+        lelbow_x, lelbow_y = int(l_elbow.x * w), int(l_elbow.y * h)
+        l_hip_x, l_hip_y = int(l_hip.x * w), int(l_hip.y * h)
+        langle = calculate_angle(lel, lsh, lhip)
+        # Convert RIGHT landmark positions to pixel coordinates
+        rshoulder_x, rshoulder_y = int(r_shoulder.x * w), int(r_shoulder.y * h)
+        relbow_x, relbow_y = int(r_elbow.x * w), int(r_elbow.y * h)
+        r_hip_x, r_hip_y = int(r_hip.x * w), int(r_hip.y * h)
+        rangle = calculate_angle(rel, rsh, rhip)
+
+        # Draw LEFT angle on the frame
+        cv2.putText(
+            frame,
+            f"Lt angle --{str(langle)}",
+            (400, 20),
+            cv2.FONT_HERSHEY_SIMPLEX,
+            0.5,
+            (255, 255, 255),
+            2,
+            cv2.LINE_AA,
+        )
+        # Draw RIGHT angle on the frame
+        cv2.putText(
+            frame,
+            f"Rt angle --{str(rangle)}",
+            (400, 40),
+            cv2.FONT_HERSHEY_SIMPLEX,
+            0.5,
+            (255, 255, 255),
+            2,
+            cv2.LINE_AA,
+        )
+        mp_drawing.draw_landmarks(
+            frame,
+            results.left_hand_landmarks,
+            mp_holistic.HAND_CONNECTIONS,
+            mp_drawing.DrawingSpec(color=(255, 0, 0), thickness=3, circle_radius=3),
+            mp_drawing.DrawingSpec(color=(0, 255, 0), thickness=4, circle_radius=4),
+        )
+        mp_drawing.draw_landmarks(
+            frame,
+            results.right_hand_landmarks,
+            mp_holistic.HAND_CONNECTIONS,
+            mp_drawing.DrawingSpec(color=(255, 0, 0), thickness=3, circle_radius=3),
+            mp_drawing.DrawingSpec(color=(0, 255, 0), thickness=4, circle_radius=4),
+        )
+        mp_drawing.draw_landmarks(
+            frame,
+            res.pose_landmarks,
+            mp_pose.POSE_CONNECTIONS,
+            mp_drawing.DrawingSpec(color=(255, 0, 0), thickness=3, circle_radius=3),
+            mp_drawing.DrawingSpec(color=(0, 255, 0), thickness=4, circle_radius=4),
+        )
+
+    return [frame, rangle, langle]
+
+
+# In[4]:
+
+
+mp_pose = mp.solutions.pose
+pose = mp_pose.Pose(
+    static_image_mode=False, min_detection_confidence=0.5, min_tracking_confidence=0.5
+)
+mp_holistic = mp.solutions.holistic
+holistic = mp_holistic.Holistic(
+    min_detection_confidence=0.5, min_tracking_confidence=0.5
+)
+
+
+def main():
+    python_interpreter = f"{sys.executable}"
+    call_script = None
+    cnt = 0
+    stage = "down"
+    w, h = 640, 480
+    mp_hands = mp.solutions.hands.Hands(
+        static_image_mode=False,
+        max_num_hands=1,
+        min_detection_confidence=0.5,
+        min_tracking_confidence=0.5,
+    )
+    cap = cv2.VideoCapture(0)
+    while True:
+        ret, frame = cap.read()
+        frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+        results = holistic.process(frame_rgb)
+        try:
+            output_frame, rangle, langle = jumpingjacksutils(frame)
+            if rangle < 30 and langle < 30:
+                stage = "down"
+            if rangle > 130 and langle > 130 and stage == "down":
+                stage = "up"
+                cnt += 1
+
+            cv2.putText(
+                output_frame,
+                str(cnt),
+                (10, 60),
+                cv2.FONT_HERSHEY_SIMPLEX,
+                2,
+                (255, 255, 255),
+                2,
+                cv2.LINE_AA,
+            )
+        except:
+            output_frame = frame
+        cv2.putText(
+            output_frame,
+            "BACK",
+            (425, 25),
+            cv2.FONT_HERSHEY_SIMPLEX,
+            0.75,
+            (255, 255, 255),
+            2,
+            cv2.LINE_AA,
+        )
+        result = mp_hands.process(frame_rgb)
+        x, y = -1, -1
+        if result.multi_hand_landmarks:
+            # Get the first (right) hand's landmarks
+            hand_landmarks = result.multi_hand_landmarks[0]
+
+            # Get the right index finger coordinates (landmark 8)
+            index_finger_landmark = hand_landmarks.landmark[
+                mp.solutions.hands.HandLandmark.INDEX_FINGER_TIP
+            ]
+            x, y = int(index_finger_landmark.x * w), int(index_finger_landmark.y * h)
+        cv2.circle(frame, (x, y), 8, (0, 255, 0), -1)
+        if x > 410 and x < 440 and y > 5 and y < 35:
+            cv2.putText(
+                frame,
+                "BACK",
+                (425, 25),
+                cv2.FONT_HERSHEY_SIMPLEX,
+                1,
+                (0, 0, 255),
+                1,
+                cv2.LINE_AA,
+            )
+            call_script = "Menu.py"
+        command = [python_interpreter, call_script]
+        if call_script is not None:
+            try:
+                subprocess.Popen(command)
+                break
+            except subprocess.CalledProcessError as e:
+                print(f"Error executing the script: {e}")
+            except FileNotFoundError:
+                print("Enter the correct PATH.")
+        cv2.imshow("Output", output_frame)
+        if cv2.waitKey(1) & 0xFF == ord("q"):
+            break
+    cap.release()
+    cv2.destroyAllWindows()
+
+
+if __name__ == "__main__":
+    main()
