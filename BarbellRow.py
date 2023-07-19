@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[2]:
 
 
 import numpy as np
@@ -11,7 +10,6 @@ from Angle import calculate_angle
 import subprocess
 import sys
 
-# In[3]:
 
 
 mp_drawing = mp.solutions.drawing_utils
@@ -52,13 +50,7 @@ def barbellrowutil(frame):
             landmarks[mp_pose.PoseLandmark.LEFT_HIP.value].y,
         ]
         lvert = [landmarks[mp_pose.PoseLandmark.LEFT_HIP.value].x, 0]
-        # Specify RIGHT shoulder, elbow, and wrist landmark indices
-        #         r_shoulder = landmarks[mp_pose.PoseLandmark.RIGHT_SHOULDER.value]
-        #         r_elbow = landmarks[mp_pose.PoseLandmark.RIGHT_ELBOW.value]
-        #         r_wrist = landmarks[mp_pose.PoseLandmark.RIGHT_WRIST.value]
-        #         rsh = [landmarks[mp_pose.PoseLandmark.RIGHT_SHOULDER.value].x,landmarks[mp_pose.PoseLandmark.RIGHT_SHOULDER.value].y]
-        #         rel = [landmarks[mp_pose.PoseLandmark.RIGHT_ELBOW.value].x,landmarks[mp_pose.PoseLandmark.RIGHT_ELBOW.value].y]
-        #         rwr = [landmarks[mp_pose.PoseLandmark.RIGHT_WRIST.value].x,landmarks[mp_pose.PoseLandmark.RIGHT_WRIST.value].y]
+
 
         # Convert LEFT landmark positions to pixel coordinates
         lshoulder_x, lshoulder_y = int(l_shoulder.x * w), int(l_shoulder.y * h)
@@ -68,17 +60,13 @@ def barbellrowutil(frame):
         lvert_x, lvert_y = int(l_shoulder.x * w), int(0 * h)
         langle = calculate_angle(lsh, lel, lwr)
         posture_angle = calculate_angle(lsh, lhip, lvert)
-        # Convert RIGHT landmark positions to pixel coordinates
-        #         rshoulder_x, rshoulder_y = int(r_shoulder.x * w), int(r_shoulder.y * h)
-        #         relbow_x, relbow_y = int(r_elbow.x * w), int(r_elbow.y * h)
-        #         rwrist_x, rwrist_y = int(r_wrist.x * w), int(r_wrist.y * h)
-        #         rangle = calculate_angle(rsh, rel, rwr)
 
         # Draw LEFT lines on the frame
+        cv2.rectangle(frame, (395, 430), (640, 460), (0, 0, 0), -1)
         cv2.putText(
             frame,
-            str(langle),
-            tuple(np.multiply(lel, [640, 480]).astype(int)),
+            f"Lt angle --{str(langle)}",
+            (400, 450),
             cv2.FONT_HERSHEY_SIMPLEX,
             0.5,
             (255, 255, 255),
@@ -100,10 +88,10 @@ def barbellrowutil(frame):
             cv2.putText(
                 frame,
                 "BAD POSTURE",
-                (100, 30),
+                (220, 30),
                 cv2.FONT_HERSHEY_SIMPLEX,
                 1,
-                (255, 255, 255),
+                (0, 0, 255),
                 2,
                 cv2.LINE_AA,
             )
@@ -118,21 +106,8 @@ def barbellrowutil(frame):
             mp_drawing.DrawingSpec(color=(255, 0, 0), thickness=3, circle_radius=3),
             mp_drawing.DrawingSpec(color=(0, 255, 0), thickness=4, circle_radius=4),
         )
-        # Draw RIGHT lines on the frame
-    #         cv2.putText(frame, str(rangle),
-    #                            tuple(np.multiply(rel, [640, 480]).astype(int)),
-    #                            cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2, cv2.LINE_AA
-    #                                 )
-    #         cv2.line(frame, (rshoulder_x, rshoulder_y), (relbow_x, relbow_y), (0, 255, 0), 5)
-    #         cv2.line(frame, (relbow_x, relbow_y), (rwrist_x, rwrist_y), (0, 255, 0), 5)
-    #         cv2.circle(frame, (rshoulder_x, rshoulder_y), 5, (255, 0, 0), -1)
-    #         cv2.circle(frame, (relbow_x, relbow_y), 5, (255, 0, 0), -1)
-    #         cv2.circle(frame, (rwrist_x, rwrist_y), 5, (255, 0, 0), -1)
-
     return [frame, langle, posture_angle]
 
-
-# In[4]:
 
 
 mp_pose = mp.solutions.pose
@@ -151,6 +126,23 @@ mp_hands = mp.solutions.hands.Hands(
 )
 
 
+def start(frame,x,y):
+    cv2.rectangle(frame, (310, 0), (390, 35), (0, 0, 0), -1)
+    cv2.putText(
+            frame,
+            "Start",
+            (320, 20),
+            cv2.FONT_HERSHEY_SIMPLEX,
+            0.75,
+            (255, 255, 255),
+            2,
+            cv2.LINE_AA,
+    )
+    if x > 310 and x < 350 and y > 10 and y < 55:
+        return 1
+    return 0
+
+
 def main():
     python_interpreter = f"{sys.executable}"
     # Change this if your Python executable has a different name or path
@@ -158,41 +150,11 @@ def main():
     cnt = 0
     stage = "down"
     w, h = 640, 480
+    flag=0
     cap = cv2.VideoCapture(0)
     while True:
         ret, frame = cap.read()
         frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-        results = holistic.process(frame_rgb)
-        try:
-            output_frame, langle, posture_angle = barbellrowutil(frame)
-            if langle > 150:
-                stage = "back"
-            if langle < 108 and stage == "back":
-                stage = "front"
-                cnt += 1
-            cv2.rectangle(frame, (420, 1), (635, 45), (0, 0, 0), -1)
-            cv2.putText(
-                output_frame,
-                str(cnt),
-                (10, 60),
-                cv2.FONT_HERSHEY_SIMPLEX,
-                2,
-                (255, 255, 255),
-                2,
-                cv2.LINE_AA,
-            )
-        except:
-            output_frame = frame
-        cv2.putText(
-            output_frame,
-            "BACK",
-            (425, 25),
-            cv2.FONT_HERSHEY_SIMPLEX,
-            0.75,
-            (255, 255, 255),
-            2,
-            cv2.LINE_AA,
-        )
         result = mp_hands.process(frame_rgb)
         x, y = -1, -1
         if result.multi_hand_landmarks:
@@ -205,7 +167,44 @@ def main():
             ]
             x, y = int(index_finger_landmark.x * w), int(index_finger_landmark.y * h)
         cv2.circle(frame, (x, y), 8, (0, 255, 0), -1)
-        if x > 410 and x < 440 and y > 5 and y < 35:
+        if not flag:
+            flag=start(frame,x,y)
+        # Process the frame and draw lines
+        if flag==1:
+            try:
+                output_frame, langle, posture_angle = barbellrowutil(frame)
+                if langle > 150:
+                    stage = "back"
+                if langle < 108 and stage == "back":
+                    stage = "front"
+                    cnt += 1
+                cv2.rectangle(frame, (0, 0), (60, 80), (0, 0, 0), -1)
+                cv2.putText(
+                    output_frame,
+                    str(cnt),
+                    (10, 60),
+                    cv2.FONT_HERSHEY_SIMPLEX,
+                    2,
+                    (255, 255, 255),
+                    2,
+                    cv2.LINE_AA,
+                )
+            except:
+                output_frame = frame
+        if not flag:
+            output_frame=frame
+        cv2.rectangle(frame, (505, 10), (640, 55), (0, 0, 0), -1)
+        cv2.putText(
+            output_frame,
+            "BACK",
+            (515, 30),
+            cv2.FONT_HERSHEY_SIMPLEX,
+            0.75,
+            (255, 255, 255),
+            2,
+            cv2.LINE_AA,
+        )
+        if x > 505 and x < 640 and y > 10 and y < 55:
             cv2.putText(
                 frame,
                 "BACK",

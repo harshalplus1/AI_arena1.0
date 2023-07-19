@@ -77,18 +77,6 @@ def shoulderpressutils(frame):
         relbow_x, relbow_y = int(r_elbow.x * w), int(r_elbow.y * h)
         rwrist_x, rwrist_y = int(r_wrist.x * w), int(r_wrist.y * h)
         rangle = calculate_angle(rsh, rel, rwr)
-
-        # Draw LEFT lines on the frame
-        cv2.putText(
-            frame,
-            str(langle),
-            tuple(np.multiply(lel, [640, 480]).astype(int)),
-            cv2.FONT_HERSHEY_SIMPLEX,
-            0.5,
-            (255, 255, 255),
-            2,
-            cv2.LINE_AA,
-        )
         cv2.line(
             frame, (lshoulder_x, lshoulder_y), (lelbow_x, lelbow_y), (0, 255, 0), 5
         )
@@ -96,11 +84,23 @@ def shoulderpressutils(frame):
         cv2.circle(frame, (lshoulder_x, lshoulder_y), 5, (255, 0, 0), -1)
         cv2.circle(frame, (lelbow_x, lelbow_y), 5, (255, 0, 0), -1)
         cv2.circle(frame, (lwrist_x, lwrist_y), 5, (255, 0, 0), -1)
-        # Draw RIGHT lines on the frame
+        # Draw Left lines on the frame
+        cv2.rectangle(frame, (395, 430), (640, 480), (0, 0, 0), -1)
         cv2.putText(
             frame,
-            str(rangle),
-            tuple(np.multiply(rel, [640, 480]).astype(int)),
+            f"Lt angle --{str(langle)}",
+            (400, 450),
+            cv2.FONT_HERSHEY_SIMPLEX,
+            0.5,
+            (255, 255, 255),
+            2,
+            cv2.LINE_AA,
+        )
+        # Draw RIGHT angle on the frame
+        cv2.putText(
+            frame,
+            f"Rt angle --{str(rangle)}",
+            (400, 470),
             cv2.FONT_HERSHEY_SIMPLEX,
             0.5,
             (255, 255, 255),
@@ -118,7 +118,21 @@ def shoulderpressutils(frame):
     return [frame, rangle, langle]
 
 
-# In[5]:
+def start(frame,x,y):
+    cv2.rectangle(frame, (310, 0), (390, 35), (0, 0, 0), -1)
+    cv2.putText(
+            frame,
+            "Start",
+            (320, 20),
+            cv2.FONT_HERSHEY_SIMPLEX,
+            0.75,
+            (255, 255, 255),
+            2,
+            cv2.LINE_AA,
+    )
+    if x > 310 and x < 350 and y > 10 and y < 55:
+        return 1
+    return 0
 
 
 mp_pose = mp.solutions.pose
@@ -144,40 +158,12 @@ def main():
         min_detection_confidence=0.5,
         min_tracking_confidence=0.5,
     )
+    flag=0
     cap = cv2.VideoCapture(0)
     while True:
         ret, frame = cap.read()
         frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         results = holistic.process(frame_rgb)
-        try:
-            output_frame, rangle, langle = shoulderpressutils(frame)
-            if rangle > 140 and langle > 140:
-                stage = "down"
-            if rangle < 70 and langle < 70 and stage == "down":
-                stage = "up"
-                cnt += 1
-            cv2.putText(
-                output_frame,
-                str(cnt),
-                (10, 60),
-                cv2.FONT_HERSHEY_SIMPLEX,
-                2,
-                (255, 255, 255),
-                2,
-                cv2.LINE_AA,
-            )
-        except:
-            output_frame = frame
-        cv2.putText(
-            output_frame,
-            "BACK",
-            (425, 25),
-            cv2.FONT_HERSHEY_SIMPLEX,
-            0.75,
-            (255, 255, 255),
-            2,
-            cv2.LINE_AA,
-        )
         result = mp_hands.process(frame_rgb)
         x, y = -1, -1
         if result.multi_hand_landmarks:
@@ -190,7 +176,44 @@ def main():
             ]
             x, y = int(index_finger_landmark.x * w), int(index_finger_landmark.y * h)
         cv2.circle(frame, (x, y), 8, (0, 255, 0), -1)
-        if x > 410 and x < 440 and y > 5 and y < 35:
+        if not flag:
+            flag=start(frame,x,y)
+        # Process the frame and draw lines
+        if flag==1:
+            try:
+                output_frame, rangle, langle = shoulderpressutils(frame)
+                if rangle > 140 and langle > 140:
+                    stage = "down"
+                if rangle < 70 and langle < 70 and stage == "down":
+                    stage = "up"
+                    cnt += 1
+                cv2.rectangle(frame, (0, 0), (60, 80), (0, 0, 0), -1)
+                cv2.putText(
+                    output_frame,
+                    str(cnt),
+                    (10, 60),
+                    cv2.FONT_HERSHEY_SIMPLEX,
+                    2,
+                    (255, 255, 255),
+                    2,
+                    cv2.LINE_AA,
+                )
+            except:
+                output_frame = frame
+        if not flag:
+            output_frame = frame
+        cv2.rectangle(frame, (505, 10), (640, 55), (0, 0, 0), -1)
+        cv2.putText(
+            output_frame,
+            "BACK",
+            (515, 30),
+            cv2.FONT_HERSHEY_SIMPLEX,
+            0.75,
+            (255, 255, 255),
+            2,
+            cv2.LINE_AA,
+        )
+        if x > 505 and x < 640 and y > 10 and y < 55:
             cv2.putText(
                 frame,
                 "BACK",

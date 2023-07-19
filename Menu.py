@@ -21,81 +21,82 @@ def choice(frame):
     )
     frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
     w, h = 640, 480
-    cv2.rectangle(frame, (420, 1), (635, 45), (0, 0, 0), -1)
-    cv2.rectangle(frame, (420, 60), (635, 105), (0, 0, 0), -1)
-    cv2.rectangle(frame, (420, 115), (635, 165), (0, 0, 0), -1)
-    cv2.rectangle(frame, (420, 175), (635, 225), (0, 0, 0), -1)
-    cv2.rectangle(frame, (420, 235), (635, 285), (0, 0, 0), -1)
-    cv2.rectangle(frame, (420, 295), (635, 345), (0, 0, 0), -1)
-    cv2.rectangle(frame, (420, 355), (635, 405), (0, 0, 0), -1)
+    cv2.rectangle(frame, (10, 10), (145, 55), (0, 0, 0), -1)
+    cv2.rectangle(frame, (10, 90), (145, 135), (0, 0, 0), -1)
+    cv2.rectangle(frame, (10, 170), (145, 215), (0, 0, 0), -1)
+    cv2.rectangle(frame, (505, 10), (640, 55), (0, 0, 0), -1)
+    cv2.rectangle(frame, (505, 90), (640, 135), (0, 0, 0), -1)
+    cv2.rectangle(frame, (505, 170), (640, 215), (0, 0, 0), -1)
+
     cv2.putText(
         frame,
         "1.Biceps",
-        (425, 25),
+        (20, 30),
         cv2.FONT_HERSHEY_SIMPLEX,
-        0.75,
+        0.5,
         (255, 255, 255),
-        2,
+        1,
         cv2.LINE_AA,
     )
     cv2.putText(
         frame,
-        "2.Shoulders",
-        (425, 85),
+        "2.BarbellRow",
+        (20, 110),
         cv2.FONT_HERSHEY_SIMPLEX,
-        0.75,
+        0.5,
         (255, 255, 255),
-        2,
+        1,
         cv2.LINE_AA,
     )
     cv2.putText(
         frame,
-        "3.BarbellRow",
-        (425, 140),
+        "3.JumpingJacks",
+        (20, 190),
         cv2.FONT_HERSHEY_SIMPLEX,
-        0.75,
+        0.5,
         (255, 255, 255),
-        2,
+        1,
         cv2.LINE_AA,
     )
     cv2.putText(
         frame,
-        "4.JumpingJacks",
-        (425, 200),
+        "4.FrontRaise",
+        (515, 30),
         cv2.FONT_HERSHEY_SIMPLEX,
-        0.75,
+        0.5,
         (255, 255, 255),
-        2,
+        1,
         cv2.LINE_AA,
     )
     cv2.putText(
         frame,
-        "5.FrontRaise",
-        (425, 260),
+        "5.ShoulderPress",
+        (515, 110),
         cv2.FONT_HERSHEY_SIMPLEX,
-        0.75,
+        0.5,
         (255, 255, 255),
-        2,
+        1,
         cv2.LINE_AA,
     )
     cv2.putText(
         frame,
-        "6.ShoulderPress",
-        (425, 320),
+        "6.Squats",
+        (515, 190),
         cv2.FONT_HERSHEY_SIMPLEX,
-        0.75,
+        0.5,
         (255, 255, 255),
-        2,
+        1,
         cv2.LINE_AA,
     )
+    cv2.rectangle(frame, (315, 0), (360, 20), (0, 0, 0), -1)
     cv2.putText(
         frame,
-        "7.Squats",
-        (425, 380),
+        "Exit",
+        (320, 10),
         cv2.FONT_HERSHEY_SIMPLEX,
-        0.75,
+        0.5,
         (255, 255, 255),
-        2,
+        1,
         cv2.LINE_AA,
     )
     results = mp_hands.process(frame_rgb)
@@ -116,9 +117,8 @@ def choice(frame):
 
 
 def main():
-    python_interpreter = f"{sys.executable}"  # Change this if your Python executable has a different name or path
+    python_interpreter = f"{sys.executable}" 
     call_script = None
-    print(python_interpreter)
     cap = cv2.VideoCapture(0)
     while True:
         ret, frame = cap.read()
@@ -126,90 +126,20 @@ def main():
         option = None
         project_launched = None
         cv2.circle(nframe, (x, y), 8, (0, 255, 0), 2)
-        if x > 410 and x < 440 and y > 5 and y < 35:
-            cv2.putText(
-                frame,
-                "1.Biceps",
-                (425, 25),
-                cv2.FONT_HERSHEY_SIMPLEX,
-                1,
-                (0, 0, 255),
-                1,
-                cv2.LINE_AA,
-            )
+        if x > 10 and x < 145 and y > 10 and y < 55:
             call_script = "Biceps.py"
-        elif x > 410 and x < 440 and y > 60 and y < 90:
-            cv2.putText(
-                frame,
-                "2.FrontRaise",
-                (425, 85),
-                cv2.FONT_HERSHEY_SIMPLEX,
-                1,
-                (0, 0, 255),
-                1,
-                cv2.LINE_AA,
-            )
-            call_script = "FrontRaise.py"
-        elif x > 410 and x < 440 and y > 115 and y < 145:
-            cv2.putText(
-                frame,
-                "3.BarbellRow.py",
-                (425, 140),
-                cv2.FONT_HERSHEY_SIMPLEX,
-                1,
-                (0, 0, 255),
-                1,
-                cv2.LINE_AA,
-            )
+        elif x > 10 and x < 145 and y > 90 and y < 135:
             call_script = "BarbellRow.py"
-        elif x > 410 and x < 440 and y > 170 and y < 210:
-            cv2.putText(
-                frame,
-                "4.JumpingJacks.py",
-                (425, 140),
-                cv2.FONT_HERSHEY_SIMPLEX,
-                1,
-                (0, 0, 255),
-                1,
-                cv2.LINE_AA,
-            )
+        elif x > 10 and x < 145 and y > 170 and y < 215:
             call_script = "JumpingJacks.py"
-        elif x > 410 and x < 440 and y > 230 and y < 270:
-            cv2.putText(
-                frame,
-                "5.FrontRaise.py",
-                (425, 140),
-                cv2.FONT_HERSHEY_SIMPLEX,
-                1,
-                (0, 0, 255),
-                1,
-                cv2.LINE_AA,
-            )
+        elif x > 505 and x < 640 and y > 10 and y < 55:
             call_script = "FrontRaise.py"
-        elif x > 410 and x < 440 and y > 290 and y < 330:
-            cv2.putText(
-                frame,
-                "6.ShoulderPress.py",
-                (425, 140),
-                cv2.FONT_HERSHEY_SIMPLEX,
-                1,
-                (0, 0, 255),
-                1,
-                cv2.LINE_AA,
-            )
+        elif x > 505 and x < 640 and y > 90 and y < 135:
             call_script = "ShoulderPress.py"
-        elif x > 410 and x < 440 and y > 350 and y < 390:
-            cv2.putText(
-                frame,
-                "7.Squats.py",
-                (425, 140),
-                cv2.FONT_HERSHEY_SIMPLEX,
-                1,
-                (0, 0, 255),
-                1,
-                cv2.LINE_AA,
-            )
+        elif x > 505 and x < 640 and y > 170 and y < 215:
             call_script = "Squats.py"
+        elif x > 315 and x < 360 and y > 0 and y < 20:
+            break
         command = [python_interpreter, call_script]
         if call_script is not None:
             try:

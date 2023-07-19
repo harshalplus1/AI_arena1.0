@@ -98,10 +98,11 @@ def frontraiseutils(frame):
         rangle = calculate_angle(rel, rsh, rhip)
 
         # Draw LEFT angle on the frame
+        cv2.rectangle(frame, (395, 430), (640, 480), (0, 0, 0), -1)
         cv2.putText(
             frame,
             f"Lt angle --{str(langle)}",
-            (400, 20),
+            (400, 450),
             cv2.FONT_HERSHEY_SIMPLEX,
             0.5,
             (255, 255, 255),
@@ -112,7 +113,7 @@ def frontraiseutils(frame):
         cv2.putText(
             frame,
             f"Rt angle --{str(rangle)}",
-            (400, 40),
+            (400, 470),
             cv2.FONT_HERSHEY_SIMPLEX,
             0.5,
             (255, 255, 255),
@@ -155,7 +156,21 @@ def frontraiseutils(frame):
     return [frame, rangle, langle]
 
 
-# In[4]:
+def start(frame,x,y):
+    cv2.rectangle(frame, (310, 0), (390, 35), (0, 0, 0), -1)
+    cv2.putText(
+            frame,
+            "Start",
+            (320, 20),
+            cv2.FONT_HERSHEY_SIMPLEX,
+            0.75,
+            (255, 255, 255),
+            2,
+            cv2.LINE_AA,
+    )
+    if x > 310 and x < 350 and y > 10 and y < 55:
+        return 1
+    return 0
 
 
 def main():
@@ -172,40 +187,12 @@ def main():
         min_detection_confidence=0.5,
         min_tracking_confidence=0.5,
     )
+    flag=0
     cap = cv2.VideoCapture(0)
     while True:
         ret, frame = cap.read()
         frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         results = holistic.process(frame_rgb)
-        try:
-            output_frame, rangle, langle = frontraiseutils(frame)
-            if rangle < 15 and langle < 15:
-                stage = "down"
-            if rangle > 45 and langle > 45 and stage == "down":
-                stage = "up"
-                cnt += 1
-            cv2.putText(
-                output_frame,
-                str(cnt),
-                (10, 60),
-                cv2.FONT_HERSHEY_SIMPLEX,
-                2,
-                (255, 255, 255),
-                2,
-                cv2.LINE_AA,
-            )
-        except:
-            output_frame = frame
-        cv2.putText(
-            output_frame,
-            "BACK",
-            (425, 25),
-            cv2.FONT_HERSHEY_SIMPLEX,
-            0.75,
-            (255, 255, 255),
-            2,
-            cv2.LINE_AA,
-        )
         result = mp_hands.process(frame_rgb)
         x, y = -1, -1
         if result.multi_hand_landmarks:
@@ -218,7 +205,44 @@ def main():
             ]
             x, y = int(index_finger_landmark.x * w), int(index_finger_landmark.y * h)
         cv2.circle(frame, (x, y), 8, (0, 255, 0), -1)
-        if x > 410 and x < 440 and y > 5 and y < 35:
+        if not flag:
+            flag=start(frame,x,y)
+        # Process the frame and draw lines
+        if flag==1:
+            try:
+                output_frame, rangle, langle = frontraiseutils(frame)
+                if rangle < 15 and langle < 15:
+                    stage = "down"
+                if rangle > 45 and langle > 45 and stage == "down":
+                    stage = "up"
+                    cnt += 1
+                cv2.rectangle(frame, (0, 0), (60, 80), (0, 0, 0), -1)
+                cv2.putText(
+                    output_frame,
+                    str(cnt),
+                    (10, 60),
+                    cv2.FONT_HERSHEY_SIMPLEX,
+                    2,
+                    (255, 255, 255),
+                    2,
+                    cv2.LINE_AA,
+                )
+            except:
+                output_frame = frame
+        if not flag:
+            output_frame = frame
+        cv2.rectangle(frame, (505, 10), (640, 55), (0, 0, 0), -1)
+        cv2.putText(
+            output_frame,
+            "BACK",
+            (515, 30),
+            cv2.FONT_HERSHEY_SIMPLEX,
+            0.75,
+            (255, 255, 255),
+            2,
+            cv2.LINE_AA,
+        )
+        if x > 505 and x < 640 and y > 10 and y < 55:
             cv2.putText(
                 frame,
                 "BACK",

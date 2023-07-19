@@ -1,0 +1,5 @@
+streamlit
+mediapipe
+numpy
+opencv-python
+subprocess.run

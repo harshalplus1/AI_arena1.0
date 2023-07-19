@@ -88,16 +88,6 @@ def bicepcurlutil(frame):
         rangle = calculate_angle(rsh, rel, rwr)
 
         # Draw LEFT lines on the frame
-        cv2.putText(
-            frame,
-            str(langle),
-            tuple(np.multiply(lel, [640, 480]).astype(int)),
-            cv2.FONT_HERSHEY_SIMPLEX,
-            0.5,
-            (255, 255, 255),
-            2,
-            cv2.LINE_AA,
-        )
         cv2.line(
             frame, (lshoulder_x, lshoulder_y), (lelbow_x, lelbow_y), (0, 255, 0), 5
         )
@@ -106,10 +96,22 @@ def bicepcurlutil(frame):
         cv2.circle(frame, (lelbow_x, lelbow_y), 5, (255, 0, 0), -1)
         cv2.circle(frame, (lwrist_x, lwrist_y), 5, (255, 0, 0), -1)
         # Draw RIGHT lines on the frame
+        cv2.rectangle(frame, (395, 430), (640, 480), (0, 0, 0), -1)
         cv2.putText(
             frame,
-            str(rangle),
-            tuple(np.multiply(rel, [640, 480]).astype(int)),
+            f"Lt angle --{str(langle)}",
+            (400, 450),
+            cv2.FONT_HERSHEY_SIMPLEX,
+            0.5,
+            (255, 255, 255),
+            2,
+            cv2.LINE_AA,
+        )
+        # Draw RIGHT angle on the frame
+        cv2.putText(
+            frame,
+            f"Rt angle --{str(rangle)}",
+            (400, 470),
             cv2.FONT_HERSHEY_SIMPLEX,
             0.5,
             (255, 255, 255),
@@ -127,10 +129,26 @@ def bicepcurlutil(frame):
     return [frame, rangle, langle]
 
 
+def start(frame,x,y):
+    cv2.rectangle(frame, (310, 0), (390, 35), (0, 0, 0), -1)
+    cv2.putText(
+            frame,
+            "Start",
+            (320, 20),
+            cv2.FONT_HERSHEY_SIMPLEX,
+            0.75,
+            (255, 255, 255),
+            2,
+            cv2.LINE_AA,
+    )
+    if x > 310 and x < 350 and y > 10 and y < 55:
+        return 1
+    return 0
+
+
 # In[21]:
 def main():
     python_interpreter = f"{sys.executable}"
-    print(python_interpreter)
     call_script = None
     cnt = 0
     stage = "down"
@@ -142,58 +160,14 @@ def main():
         min_detection_confidence=0.5,
         min_tracking_confidence=0.5,
     )
+    flag=0
     cap = cv2.VideoCapture(0)
     while True:
         ret, frame = cap.read()
         frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         results = holistic.process(frame_rgb)
-        # Process the frame and draw lines
-        try:
-            output_frame, rangle, langle = bicepcurlutil(frame)
-            mp_drawing.draw_landmarks(
-                output_frame,
-                results.left_hand_landmarks,
-                mp_holistic.HAND_CONNECTIONS,
-                mp_drawing.DrawingSpec(color=(255, 0, 0), thickness=3, circle_radius=3),
-                mp_drawing.DrawingSpec(color=(0, 255, 0), thickness=4, circle_radius=4),
-            )
-            mp_drawing.draw_landmarks(
-                output_frame,
-                results.right_hand_landmarks,
-                mp_holistic.HAND_CONNECTIONS,
-                mp_drawing.DrawingSpec(color=(255, 0, 0), thickness=3, circle_radius=3),
-                mp_drawing.DrawingSpec(color=(0, 255, 0), thickness=4, circle_radius=4),
-            )
-            if rangle > 160 and langle > 160:
-                stage = "down"
-            if rangle < 30 and langle < 30 and stage == "down":
-                stage = "up"
-                cnt += 1
-
-            cv2.putText(
-                output_frame,
-                str(cnt),
-                (10, 60),
-                cv2.FONT_HERSHEY_SIMPLEX,
-                2,
-                (255, 255, 255),
-                2,
-                cv2.LINE_AA,
-            )
-        except:
-            output_frame = frame
-        cv2.putText(
-            output_frame,
-            "BACK",
-            (425, 25),
-            cv2.FONT_HERSHEY_SIMPLEX,
-            0.75,
-            (255, 255, 255),
-            2,
-            cv2.LINE_AA,
-        )
-        result = mp_hands.process(frame_rgb)
         x, y = -1, -1
+        result = mp_hands.process(frame_rgb)
         if result.multi_hand_landmarks:
             # Get the first (right) hand's landmarks
             hand_landmarks = result.multi_hand_landmarks[0]
@@ -204,17 +178,58 @@ def main():
             ]
             x, y = int(index_finger_landmark.x * w), int(index_finger_landmark.y * h)
         cv2.circle(frame, (x, y), 8, (0, 255, 0), -1)
-        if x > 410 and x < 440 and y > 5 and y < 35:
-            cv2.putText(
-                frame,
-                "BACK",
-                (425, 25),
-                cv2.FONT_HERSHEY_SIMPLEX,
-                1,
-                (0, 0, 255),
-                1,
-                cv2.LINE_AA,
-            )
+        if not flag:
+            flag=start(frame,x,y)
+        # Process the frame and draw lines
+        if flag==1:
+            try:
+                output_frame, rangle, langle = bicepcurlutil(frame)
+                mp_drawing.draw_landmarks(
+                    output_frame,
+                    results.left_hand_landmarks,
+                    mp_holistic.HAND_CONNECTIONS,
+                    mp_drawing.DrawingSpec(color=(255, 0, 0), thickness=3, circle_radius=3),
+                    mp_drawing.DrawingSpec(color=(0, 255, 0), thickness=4, circle_radius=4),
+                )
+                mp_drawing.draw_landmarks(
+                    output_frame,
+                    results.right_hand_landmarks,
+                    mp_holistic.HAND_CONNECTIONS,
+                    mp_drawing.DrawingSpec(color=(255, 0, 0), thickness=3, circle_radius=3),
+                    mp_drawing.DrawingSpec(color=(0, 255, 0), thickness=4, circle_radius=4),
+                )
+                if rangle > 160 and langle > 160:
+                    stage = "down"
+                if rangle < 30 and langle < 30 and stage == "down":
+                    stage = "up"
+                    cnt += 1
+                cv2.rectangle(frame, (0, 0), (60, 80), (0, 0, 0), -1)
+                cv2.putText(
+                    output_frame,
+                    str(cnt),
+                    (10, 60),
+                    cv2.FONT_HERSHEY_SIMPLEX,
+                    2,
+                    (255, 255, 255),
+                    2,
+                    cv2.LINE_AA,
+                )
+            except:
+                output_frame = frame
+        if not flag:
+            output_frame=frame
+        cv2.rectangle(frame, (505, 10), (640, 55), (0, 0, 0), -1)
+        cv2.putText(
+            output_frame,
+            "BACK",
+            (515, 30),
+            cv2.FONT_HERSHEY_SIMPLEX,
+            0.75,
+            (255, 255, 255),
+            2,
+            cv2.LINE_AA,
+        )
+        if x > 505 and x < 640 and y > 10 and y < 55:
             call_script = "Menu.py"
         command = [python_interpreter, call_script]
         if call_script is not None:
