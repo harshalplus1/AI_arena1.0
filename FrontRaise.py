@@ -10,6 +10,9 @@ import mediapipe as mp
 from Angle import calculate_angle
 import subprocess
 import sys
+import Menu 
+
+
 
 
 # In[3]:
@@ -216,7 +219,7 @@ def main():
                 if rangle > 45 and langle > 45 and stage == "down":
                     stage = "up"
                     cnt += 1
-                cv2.rectangle(frame, (0, 0), (60, 80), (0, 0, 0), -1)
+                cv2.rectangle(frame, (0, 0), (90, 80), (0, 0, 0), -1)
                 cv2.putText(
                     output_frame,
                     str(cnt),
@@ -263,7 +266,7 @@ def main():
                 print(f"Error executing the script: {e}")
             except FileNotFoundError:
                 print("Enter the correct PATH.")
-        cv2.imshow("Output", output_frame)
+        cv2.imshow("FrontRaise", output_frame)
         if cv2.waitKey(1) & 0xFF == ord("q"):
             break
     cap.release()

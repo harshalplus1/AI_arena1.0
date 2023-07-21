@@ -20,11 +20,13 @@ def main():
         "<h4>Click the button below to start running the application:</h4>",
         unsafe_allow_html=True,
     )
+
     st.markdown("<br>", unsafe_allow_html=True)
     if st.button("Launch The App"):
         st.spinner("Launching...")
+        install_requirements(requirements_file)
         process = subprocess.Popen(
-            ["python", "menu.py"], stdout=subprocess.PIPE, stderr=subprocess.PIPE
+            ["python", "recognition.py"], stdout=subprocess.PIPE, stderr=subprocess.PIPE
         )
 
         # Read the output from the subprocess
@@ -44,5 +46,4 @@ def main():
 
 if __name__ == "__main__":
     requirements_file = "requirements.txt"
-    install_requirements(requirements_file)
     main()

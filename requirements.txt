@@ -3,3 +3,6 @@ mediapipe
 numpy
 opencv-python
 subprocess.run
+cmake 
+dlib
+face-recognition

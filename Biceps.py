@@ -203,7 +203,7 @@ def main():
                 if rangle < 30 and langle < 30 and stage == "down":
                     stage = "up"
                     cnt += 1
-                cv2.rectangle(frame, (0, 0), (60, 80), (0, 0, 0), -1)
+                cv2.rectangle(frame, (0, 0), (90, 80), (0, 0, 0), -1)
                 cv2.putText(
                     output_frame,
                     str(cnt),
@@ -231,6 +231,7 @@ def main():
         )
         if x > 505 and x < 640 and y > 10 and y < 55:
             call_script = "Menu.py"
+            
         command = [python_interpreter, call_script]
         if call_script is not None:
             try:
@@ -240,7 +241,7 @@ def main():
                 print(f"Error executing the script: {e}")
             except FileNotFoundError:
                 print("Enter the correct PATH.")
-        cv2.imshow("Output", output_frame)
+        cv2.imshow("BicepCurl", output_frame)
         if cv2.waitKey(1) & 0xFF == ord("q"):
             break
     cap.release()

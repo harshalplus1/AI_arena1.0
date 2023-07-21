@@ -5,7 +5,6 @@
 import numpy as np
 import cv2
 import mediapipe as mp
-
 import time
 import subprocess
 import sys
@@ -114,7 +113,8 @@ def choice(frame):
     # Draw a circle at the right index finger's location
     cv2.circle(frame, (x_px, y_px), 8, (0, 255, 0), -1)
     return frame, x_px, y_px
-
+        
+    
 
 def main():
     python_interpreter = f"{sys.executable}" 
@@ -123,8 +123,6 @@ def main():
     while True:
         ret, frame = cap.read()
         nframe, x, y = choice(frame)
-        option = None
-        project_launched = None
         cv2.circle(nframe, (x, y), 8, (0, 255, 0), 2)
         if x > 10 and x < 145 and y > 10 and y < 55:
             call_script = "Biceps.py"
@@ -149,7 +147,7 @@ def main():
                 print(f"Error executing the script: {e}")
             except FileNotFoundError:
                 print("Enter the correct PATH.")
-        cv2.imshow("Output", nframe)
+        cv2.imshow("Menu", nframe)
         if cv2.waitKey(1) & 0xFF == ord("q"):
             break
     cap.release()
