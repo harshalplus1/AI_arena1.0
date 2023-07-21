@@ -9,50 +9,6 @@ import subprocess
 import datetime
 import random
 
-class UserAttributes:
-    def __init__(self):
-        self.user = "None"
-        self.cnt1 = 0
-        self.cnt2 = 0
-        self.cnt3 = 0
-        self.cnt4 = 0
-        self.cnt5 = 0
-        self.cnt6 = 0
-
-    def username(self, name):
-        self.user = name
-
-    def barbellcnt(self, cnt):
-        self.cnt1 = cnt
-
-    def bicepcnt(self, cnt):
-        self.cnt2 = cnt
-
-    def frntraisecnt(self, cnt):
-        self.cnt3 = cnt
-
-    def jjackscnt(self, cnt):
-        self.cnt4 = cnt
-
-    def shldrcnt(self, cnt):
-        self.cnt5 = cnt
-
-    def sqcnt(self, cnt):
-        self.cnt6 = cnt
-
-    def saveall(self):
-        arr = [self.cnt1, self.cnt2, self.cnt3, self.cnt4, self.cnt5, self.cnt6]
-        arr = np.array(arr)
-        print(arr)
-        with open("counts.txt", "a+") as file:
-            today = datetime.date.today()
-            date_str = today.strftime("%Y-%m-%d")
-            file.seek(0)
-            lines = file.readlines()
-            file.write(f"{self.user}: {date_str} --> {arr[0]} - {arr[1]} - {arr[2]} - {arr[3]} - {arr[4]} - {arr[5]}\n")
-            file.seek(0)
-            file.writelines(lines)
-
 
 mp_pose = mp.solutions.pose
 pose = mp_pose.Pose(
