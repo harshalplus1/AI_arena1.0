@@ -11,13 +11,6 @@ import sys
 import datetime
 
 
-user = None
-cnt1 = 0
-cnt2 = 0
-cnt3 = 0
-cnt4 = 0
-cnt5 = 0
-cnt6 = 0
 
 
 def choice(frame):

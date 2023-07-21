@@ -1,18 +1,12 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[2]:
-
-
 import numpy as np
 import cv2
 import mediapipe as mp
 from Angle import calculate_angle
 import subprocess
 import sys
-from Menu import counts
-
-
 # In[3]:
 
 
