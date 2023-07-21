@@ -22,11 +22,16 @@ def main():
     )
     # name of the user is stored in the user_name variable
     user_name = st.text_input("", key="user_name")
+<<<<<<< HEAD
     try:
         with open('output.txt', 'a+') as file:
             file.write(f"Name: '{user_name}'" + "\n")
     except Exception as e:
         print(f"error : {e}")
+=======
+    # ye upar wala variable
+    print(user_name)
+>>>>>>> 7870448d658f31311dee1527b67cbf483d70779f
     st.markdown(
         "<h4> <br> Click the button below to start running the application:</h4>",
         unsafe_allow_html=True,
