@@ -98,7 +98,11 @@ class FaceRecognition:
     
     def encode_realtime(self,path,name):
         face_image = face_recognition.load_image_file(path)
-        face_encoding = face_recognition.face_encodings(face_image)[0]
+        try:
+            face_encoding = face_recognition.face_encodings(face_image)[0]
+        except IndexError as e:
+            print(e)
+            sys.exit(1)
 
         self.known_face_encodings.append(face_encoding)
         self.known_face_names.append(name)
