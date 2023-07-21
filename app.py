@@ -14,7 +14,7 @@ def install_requirements(requirements_file):
 
 
 def main():
-    st.title("FitWiz - Your Personal AI Trainer")
+    st.title("FitCV - Your Personal AI Trainer")
     st.markdown("<br><br>", unsafe_allow_html=True)
     st.markdown(
         "<p style='font-size: 24px; margin: 0;'> <b> Enter your name: </b></p>",
