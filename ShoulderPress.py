@@ -10,8 +10,7 @@ import mediapipe as mp
 from Angle import calculate_angle
 import subprocess
 import sys
-import Menu 
-
+from Menu import counts
 
 
 # In[3]:
@@ -230,6 +229,11 @@ def main():
         command = [python_interpreter, call_script]
         if call_script is not None:
             try:
+                try:
+                    with open('output.txt', 'a+') as file:
+                        file.write(f"ShoulderPress: '{cnt}'" + "\n")
+                except Exception as e:
+                    print(f"error : {e}")
                 subprocess.Popen(command)
                 break
             except subprocess.CalledProcessError as e:

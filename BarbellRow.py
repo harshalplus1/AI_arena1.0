@@ -218,6 +218,11 @@ def main():
         command = [python_interpreter, call_script]
         if call_script is not None:
             try:
+                try:
+                    with open('output.txt', 'a+') as file:
+                        file.write(f"BarbellRow: '{cnt}'" + "\n")
+                except Exception as e:
+                    print(f"error : {e}")
                 subprocess.Popen(command)
                 break
             except subprocess.CalledProcessError as e:

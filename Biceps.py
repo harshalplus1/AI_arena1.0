@@ -11,6 +11,7 @@ from Angle import calculate_angle
 import subprocess
 import sys
 
+
 mp_pose = mp.solutions.pose
 pose = mp_pose.Pose(
     static_image_mode=False, min_detection_confidence=0.5, min_tracking_confidence=0.5
@@ -235,6 +236,11 @@ def main():
         command = [python_interpreter, call_script]
         if call_script is not None:
             try:
+                try:
+                    with open('output.txt', 'a+') as file:
+                        file.write(f"Biceps: '{cnt}'" + "\n")
+                except Exception as e:
+                    print(f"error : {e}")
                 subprocess.Popen(command)
                 break
             except subprocess.CalledProcessError as e:

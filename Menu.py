@@ -8,6 +8,17 @@ import mediapipe as mp
 import time
 import subprocess
 import sys
+import datetime
+
+
+user = None
+cnt1 = 0
+cnt2 = 0
+cnt3 = 0
+cnt4 = 0
+cnt5 = 0
+cnt6 = 0
+
 
 def choice(frame):
     mp_drawing = mp.solutions.drawing_utils
@@ -114,7 +125,12 @@ def choice(frame):
     cv2.circle(frame, (x_px, y_px), 8, (0, 255, 0), -1)
     return frame, x_px, y_px
         
-    
+
+def usernamee(name):
+    global user
+    user = name
+    print(f"{user} from usernamee")
+
 
 def main():
     python_interpreter = f"{sys.executable}" 

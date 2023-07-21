@@ -7,7 +7,7 @@ import mediapipe as mp
 import time
 import subprocess
 import datetime
-
+import random
 
 class UserAttributes:
     def __init__(self):
@@ -184,7 +184,7 @@ class FaceRecognition:
                                 1,
                                 cv2.LINE_AA,
                             )
-                            
+                            time.sleep(5)
                             command = [f"{sys.executable}", "Menu.py"]
                             subprocess.Popen(command)
                             break
@@ -231,7 +231,7 @@ class FaceRecognition:
     
     def register(self,frame):
         #insert name entered from the app
-        image_filename = "Harshal.png" 
+        image_filename = f"{random.randint(0,100)}.png"
         image_path = os.path.join("faces", image_filename)
         cv2.imwrite(image_path, frame)
         print(f"Image saved at: {image_path}")

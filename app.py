@@ -14,10 +14,21 @@ def install_requirements(requirements_file):
 
 
 def main():
-    st.title("FitWiz - Your Personal AI Trainer")
+    st.title("FitCV - Your Personal AI Trainer")
     st.markdown("<br><br>", unsafe_allow_html=True)
     st.markdown(
-        "<h4>Click the button below to start running the application:</h4>",
+        "<p style='font-size: 24px; margin: 0;'> <b> Enter your name: </b></p>",
+        unsafe_allow_html=True,
+    )
+    # name of the user is stored in the user_name variable
+    user_name = st.text_input("", key="user_name")
+    try:
+        with open('output.txt', 'a+') as file:
+            file.write(f"Name: '{user_name}'" + "\n")
+    except Exception as e:
+        print(f"error : {e}")
+    st.markdown(
+        "<h4> <br> Click the button below to start running the application:</h4>",
         unsafe_allow_html=True,
     )
 
@@ -39,9 +50,10 @@ def main():
 
     st.markdown("<br>", unsafe_allow_html=True)
     st.markdown(
-        "<h6>Note: <br> <br> <ul>  <li> After clicking on the button, u will get a pop up window in a short while, please wait for some time if it doesn't appear immediately. </li> <br> <li> Point your right hand index finger to the window u want to open on the screen, the current window will close and another pop up window will appear having the functionality of that screen, please wait for some time if it doesn't happen immediately. </li> <br> <li> To close the window and stop the application press the 'q' key. </li> </h6>",
+        "<h6>Note: <br> <br> <ul> <li> After clicking on the button, u will get a pop up window, please wait for some time since the program takes time to load. </li> <br> <li> Navigate through the screen by hovering over to the lables using your index finger and while choosing a label make sure not to overlap your finger with any other labels so as to ensure error-free working. </li> <br> <li> For jumping jacks and squats, make sure your whole body is visible to get better accuracy. </li> <br> <li> You can end the program by choosing the end label or pressing the 'q' key. </li> <br> <li> Please wait after selecting a label as the screens take time to load. </li> </h6>",
         unsafe_allow_html=True,
     )
+    
 
 
 if __name__ == "__main__":
