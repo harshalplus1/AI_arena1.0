@@ -188,6 +188,7 @@ class FaceRecognition:
                                 1,
                                 cv2.LINE_AA,
                             )
+                            time.sleep(5)
                             command = [f"{sys.executable}", "Registered.py"]
                             subprocess.Popen(command)
                             break
