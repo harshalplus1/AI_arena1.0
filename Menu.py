@@ -153,6 +153,11 @@ def main():
         elif x > 505 and x < 640 and y > 170 and y < 215:
             call_script = "Squats.py"
         elif x > 315 and x < 360 and y > 0 and y < 20:
+            try:
+                with open('output.txt', 'a+') as file:
+                    file.write(f"========================" + "\n")
+            except Exception as e:
+                    print(f"error : {e}")
             break
         command = [python_interpreter, call_script]
         if call_script is not None:

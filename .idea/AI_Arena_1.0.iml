@@ -2,7 +2,7 @@
 <module type="PYTHON_MODULE" version="4">
   <component name="NewModuleRootManager">
     <content url="file://$MODULE_DIR$" />
-    <orderEntry type="jdk" jdkName="Python 3.11 virtualenv at C:\Users\hkshi\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Python 3.11\my_env" jdkType="Python SDK" />
+    <orderEntry type="jdk" jdkName="Python 3.11 (AI_ARENA_1.0)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
 </module>
