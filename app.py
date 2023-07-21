@@ -22,16 +22,11 @@ def main():
     )
     # name of the user is stored in the user_name variable
     user_name = st.text_input("", key="user_name")
-<<<<<<< HEAD
     try:
         with open('output.txt', 'a+') as file:
             file.write(f"Name: '{user_name}'" + "\n")
     except Exception as e:
         print(f"error : {e}")
-=======
-    # ye upar wala variable
-    print(user_name)
->>>>>>> 7870448d658f31311dee1527b67cbf483d70779f
     st.markdown(
         "<h4> <br> Click the button below to start running the application:</h4>",
         unsafe_allow_html=True,
@@ -58,7 +53,6 @@ def main():
         "<h6>Note: <br> <br> <ul> <li> After clicking on the button, u will get a pop up window, please wait for some time since the program takes time to load. </li> <br> <li> Navigate through the screen by hovering over to the lables using your index finger and while choosing a label make sure not to overlap your finger with any other labels so as to ensure error-free working. </li> <br> <li> For jumping jacks and squats, make sure your whole body is visible to get better accuracy. </li> <br> <li> You can end the program by choosing the end label or pressing the 'q' key. </li> <br> <li> Please wait after selecting a label as the screens take time to load. </li> </h6>",
         unsafe_allow_html=True,
     )
-    
 
 
 if __name__ == "__main__":
