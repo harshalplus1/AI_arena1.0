@@ -9,49 +9,6 @@ import subprocess
 import datetime
 import random
 
-class UserAttributes:
-    def __init__(self):
-        self.user = "None"
-        self.cnt1 = 0
-        self.cnt2 = 0
-        self.cnt3 = 0
-        self.cnt4 = 0
-        self.cnt5 = 0
-        self.cnt6 = 0
-
-    def username(self, name):
-        self.user = name
-
-    def barbellcnt(self, cnt):
-        self.cnt1 = cnt
-
-    def bicepcnt(self, cnt):
-        self.cnt2 = cnt
-
-    def frntraisecnt(self, cnt):
-        self.cnt3 = cnt
-
-    def jjackscnt(self, cnt):
-        self.cnt4 = cnt
-
-    def shldrcnt(self, cnt):
-        self.cnt5 = cnt
-
-    def sqcnt(self, cnt):
-        self.cnt6 = cnt
-
-    def saveall(self):
-        arr = [self.cnt1, self.cnt2, self.cnt3, self.cnt4, self.cnt5, self.cnt6]
-        arr = np.array(arr)
-        print(arr)
-        with open("counts.txt", "a+") as file:
-            today = datetime.date.today()
-            date_str = today.strftime("%Y-%m-%d")
-            file.seek(0)
-            lines = file.readlines()
-            file.write(f"{self.user}: {date_str} --> {arr[0]} - {arr[1]} - {arr[2]} - {arr[3]} - {arr[4]} - {arr[5]}\n")
-            file.seek(0)
-            file.writelines(lines)
 
 
 mp_pose = mp.solutions.pose
@@ -173,22 +130,6 @@ class FaceRecognition:
                     fr.encode_realtime(pathh,namee) 
             
             if namee1 != "Unknown":
-                            cv2.rectangle(frame, (240, 0), (470, 35), (0, 0, 0), -1)
-                            cv2.putText(frame, "Registered Sucessfully!", (250, 15),
-                                cv2.FONT_HERSHEY_SIMPLEX,
-                                0.5,
-                                (255, 255, 255),
-                                1,
-                                cv2.LINE_AA,
-                            )
-                            cv2.putText(frame, "Redirecting to the app", (250, 30),
-                                cv2.FONT_HERSHEY_SIMPLEX,
-                                0.5,
-                                (255, 255, 255),
-                                1,
-                                cv2.LINE_AA,
-                            )
-                            time.sleep(5)
                             command = [f"{sys.executable}", "Registered.py"]
                             subprocess.Popen(command)
                             break

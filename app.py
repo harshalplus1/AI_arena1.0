@@ -3,7 +3,7 @@
 import streamlit as st
 import subprocess
 import os
-
+from datetime import datetime
 
 def install_requirements(requirements_file):
     with open(requirements_file, "r") as file:
@@ -21,9 +21,9 @@ def main():
         unsafe_allow_html=True,
     )
     # name of the user is stored in the user_name variable
+    flag=0
     user_name = st.text_input("", key="user_name")
-    # ye upar wala variable
-    print(user_name)
+    flag=1
     st.markdown(
         "<h4> <br> Click the button below to start running the application:</h4>",
         unsafe_allow_html=True,
@@ -33,6 +33,16 @@ def main():
     if st.button("Launch The App"):
         st.spinner("Launching...")
         install_requirements(requirements_file)
+        if user_name != "" and flag==1:
+            try:
+                with open('output.txt', 'a+') as file:
+                    now = datetime.now()
+                    dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
+                    file.write(f"===============================================" + "\n")
+                    file.write(f"============={dt_string}===============" + "\n")
+                    file.write(f"Name: '{user_name}'" + "\n")
+            except Exception as e:
+                print(f"error : {e}")
         process = subprocess.Popen(
             ["python", "recognition.py"], stdout=subprocess.PIPE, stderr=subprocess.PIPE
         )

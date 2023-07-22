@@ -117,12 +117,7 @@ def choice(frame):
     # Draw a circle at the right index finger's location
     cv2.circle(frame, (x_px, y_px), 8, (0, 255, 0), -1)
     return frame, x_px, y_px
-        
 
-def usernamee(name):
-    global user
-    user = name
-    print(f"{user} from usernamee")
 
 
 def main():
@@ -148,7 +143,7 @@ def main():
         elif x > 315 and x < 360 and y > 0 and y < 20:
             try:
                 with open('output.txt', 'a+') as file:
-                    file.write(f"========================" + "\n")
+                    file.write(f"===============================================" + "\n")
             except Exception as e:
                     print(f"error : {e}")
             break
