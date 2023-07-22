@@ -43,6 +43,7 @@ while True:
                                 1,
                                 cv2.LINE_AA,
                             )
+    
     cv2.imshow('Face Registration', frame)
     if x > 310 and x < 350 and y > 10 and y < 55:
         command = [f"{sys.executable}", "Menu.py"]

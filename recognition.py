@@ -108,7 +108,7 @@ class FaceRecognition:
                 for face_encoding in self.face_encodings:
                     # See if the face is a match for the known face(s)
                     matches = face_recognition.compare_faces(self.known_face_encodings, face_encoding)
-                    name = "Unknown"
+                    name = "Stray User"
                     confidence = '???'
 
                     # Calculate the shortest distance to face
@@ -130,9 +130,27 @@ class FaceRecognition:
                     fr.encode_realtime(pathh,namee) 
             
             if namee1 != "Unknown":
-                            command = [f"{sys.executable}", "Registered.py"]
-                            subprocess.Popen(command)
-                            break
+                            cv2.circle(frame, (x, y), 8, (0, 255, 0), -1)
+                            cv2.rectangle(frame, (240, 0), (470, 35), (0, 0, 0), -1)
+                            cv2.putText(frame, "Registered Sucessfully!", (250, 15),
+                                cv2.FONT_HERSHEY_SIMPLEX,
+                                0.5,
+                                (255, 255, 255),
+                                1,
+                                cv2.LINE_AA,
+                            )
+                            cv2.putText(frame, "Point here to Continue", (250, 30),
+                                cv2.FONT_HERSHEY_SIMPLEX,
+                                0.5,
+                                (255, 255, 255),
+                                1,
+                                cv2.LINE_AA,
+                            )
+                            if x > 240 and x < 470 and y > 0 and y < 35:
+                                command = [f"{sys.executable}", "Menu.py"]
+                                subprocess.Popen(command)
+                                break
+                            
             
             else:
                  cv2.rectangle(frame, (10, 100), (120, 135), (0, 0, 0), -1)
@@ -160,7 +178,7 @@ class FaceRecognition:
                 # Create the frame with the name
                 cv2.rectangle(frame, (left, top), (right, bottom), (0, 0, 255), 2)
                 cv2.rectangle(frame, (left, bottom - 35), (right, bottom), (0, 0, 255), cv2.FILLED)
-                cv2.putText(frame, name, (left + 6, bottom - 6), cv2.FONT_HERSHEY_DUPLEX, 0.44, (255, 255, 255), 1)
+                cv2.putText(frame, "Registered User", (left + 6, bottom - 6), cv2.FONT_HERSHEY_DUPLEX, 0.44, (255, 255, 255), 1)
 
             # Display the resulting image
             cv2.imshow('Face Registration', frame)
