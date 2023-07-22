@@ -178,8 +178,10 @@ class FaceRecognition:
                 # Create the frame with the name
                 cv2.rectangle(frame, (left, top), (right, bottom), (0, 0, 255), 2)
                 cv2.rectangle(frame, (left, bottom - 35), (right, bottom), (0, 0, 255), cv2.FILLED)
-                cv2.putText(frame, "Registered User", (left + 6, bottom - 6), cv2.FONT_HERSHEY_DUPLEX, 0.44, (255, 255, 255), 1)
-
+                if namee1=="Unknown":
+                    cv2.putText(frame, "Stray User", (left + 6, bottom - 6), cv2.FONT_HERSHEY_DUPLEX, 0.44, (255, 255, 255), 1)
+                else:
+                    cv2.putText(frame, "Registered User", (left + 6, bottom - 6), cv2.FONT_HERSHEY_DUPLEX, 0.44, (255, 255, 255), 1)
             # Display the resulting image
             cv2.imshow('Face Registration', frame)
 
