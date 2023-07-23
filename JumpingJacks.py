@@ -35,9 +35,9 @@ def jumpingjacksutils(frame):
         results = holistic.process(frame_rgb)
         w, h = 640, 480
         # Specify LEFT shoulder, elbow, and hip landmark indices
-        l_shoulder = landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value]
-        l_elbow = landmarks[mp_pose.PoseLandmark.LEFT_ELBOW.value]
-        l_hip = landmarks[mp_pose.PoseLandmark.LEFT_HIP.value]
+        # l_shoulder = landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value]
+        # l_elbow = landmarks[mp_pose.PoseLandmark.LEFT_ELBOW.value]
+        # l_hip = landmarks[mp_pose.PoseLandmark.LEFT_HIP.value]
         lsh = [
             landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value].x,
             landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value].y,
@@ -50,10 +50,19 @@ def jumpingjacksutils(frame):
             landmarks[mp_pose.PoseLandmark.LEFT_HIP.value].x,
             landmarks[mp_pose.PoseLandmark.LEFT_HIP.value].y,
         ]
+        lknee = [
+            landmarks[mp_pose.PoseLandmark.LEFT_KNEE.value].x,
+            landmarks[mp_pose.PoseLandmark.LEFT_KNEE.value].y,
+        ]
+        lankle = [
+            landmarks[mp_pose.PoseLandmark.LEFT_ANKLE.value].x,
+            landmarks[mp_pose.PoseLandmark.LEFT_ANKLE.value].y,
+        ]
+
         # Specify RIGHT shoulder, elbow, and hip landmark indices
-        r_shoulder = landmarks[mp_pose.PoseLandmark.RIGHT_SHOULDER.value]
-        r_elbow = landmarks[mp_pose.PoseLandmark.RIGHT_ELBOW.value]
-        r_hip = landmarks[mp_pose.PoseLandmark.RIGHT_HIP.value]
+        # r_shoulder = landmarks[mp_pose.PoseLandmark.RIGHT_SHOULDER.value]
+        # r_elbow = landmarks[mp_pose.PoseLandmark.RIGHT_ELBOW.value]
+        # r_hip = landmarks[mp_pose.PoseLandmark.RIGHT_HIP.value]
         rsh = [
             landmarks[mp_pose.PoseLandmark.RIGHT_SHOULDER.value].x,
             landmarks[mp_pose.PoseLandmark.RIGHT_SHOULDER.value].y,
@@ -66,23 +75,53 @@ def jumpingjacksutils(frame):
             landmarks[mp_pose.PoseLandmark.RIGHT_HIP.value].x,
             landmarks[mp_pose.PoseLandmark.RIGHT_HIP.value].y,
         ]
+        rknee = [
+            landmarks[mp_pose.PoseLandmark.RIGHT_KNEE.value].x,
+            landmarks[mp_pose.PoseLandmark.RIGHT_KNEE.value].y,
+        ]
+        rankle = [
+            landmarks[mp_pose.PoseLandmark.RIGHT_ANKLE.value].x,
+            landmarks[mp_pose.PoseLandmark.RIGHT_ANKLE.value].y,
+        ]
         # Convert LEFT landmark positions to pixel coordinates
-        lshoulder_x, lshoulder_y = int(l_shoulder.x * w), int(l_shoulder.y * h)
-        lelbow_x, lelbow_y = int(l_elbow.x * w), int(l_elbow.y * h)
-        l_hip_x, l_hip_y = int(l_hip.x * w), int(l_hip.y * h)
+        # lshoulder_x, lshoulder_y = int(l_shoulder.x * w), int(l_shoulder.y * h)
+        # lelbow_x, lelbow_y = int(l_elbow.x * w), int(l_elbow.y * h)
+        # l_hip_x, l_hip_y = int(l_hip.x * w), int(l_hip.y * h)
         langle = calculate_angle(lel, lsh, lhip)
+        langleb = calculate_angle(rhip, lhip, lknee)
         # Convert RIGHT landmark positions to pixel coordinates
-        rshoulder_x, rshoulder_y = int(r_shoulder.x * w), int(r_shoulder.y * h)
-        relbow_x, relbow_y = int(r_elbow.x * w), int(r_elbow.y * h)
-        r_hip_x, r_hip_y = int(r_hip.x * w), int(r_hip.y * h)
+        # rshoulder_x, rshoulder_y = int(r_shoulder.x * w), int(r_shoulder.y * h)
+        # relbow_x, relbow_y = int(r_elbow.x * w), int(r_elbow.y * h)
+        # r_hip_x, r_hip_y = int(r_hip.x * w), int(r_hip.y * h)
         rangle = calculate_angle(rel, rsh, rhip)
+        rangleb = calculate_angle(lhip, rhip, rknee)
 
         # Draw LEFT angle on the frame
-        cv2.rectangle(frame, (395, 430), (640, 480), (0, 0, 0), -1)
+        cv2.rectangle(frame, (395, 410), (640, 480), (0, 0, 0), -1)
         cv2.putText(
             frame,
             f"Lt angle --{str(langle)}",
-            (400, 450),
+            (400, 420),
+            cv2.FONT_HERSHEY_SIMPLEX,
+            0.5,
+            (255, 255, 255),
+            2,
+            cv2.LINE_AA,
+        )
+        cv2.putText(
+            frame,
+            f"Lt Bl.angle --{str(langleb)}",
+            (400, 440),
+            cv2.FONT_HERSHEY_SIMPLEX,
+            0.5,
+            (255, 255, 255),
+            2,
+            cv2.LINE_AA,
+        )
+        cv2.putText(
+            frame,
+            f"Rt Bl.angle --{str(rangleb)}",
+            (400, 460),
             cv2.FONT_HERSHEY_SIMPLEX,
             0.5,
             (255, 255, 255),
@@ -93,7 +132,7 @@ def jumpingjacksutils(frame):
         cv2.putText(
             frame,
             f"Rt angle --{str(rangle)}",
-            (400, 470),
+            (400, 480),
             cv2.FONT_HERSHEY_SIMPLEX,
             0.5,
             (255, 255, 255),
@@ -122,7 +161,7 @@ def jumpingjacksutils(frame):
             mp_drawing.DrawingSpec(color=(0, 255, 0), thickness=4, circle_radius=4),
         )
 
-    return [frame, rangle, langle]
+    return [frame, rangle, langle, langleb, rangleb]
 
 
 # In[4]:
@@ -189,10 +228,10 @@ def main():
         # Process the frame and draw lines
         if flag==1:
             try:
-                output_frame, rangle, langle = jumpingjacksutils(frame)
-                if rangle < 30 and langle < 30:
+                output_frame, rangle, langle,lbelow,rbelow = jumpingjacksutils(frame)
+                if rangle < 30 and langle < 30 and lbelow < 95 and rbelow < 95:
                     stage = "down"
-                if rangle > 130 and langle > 130 and stage == "down":
+                if rangle > 130 and langle > 130 and lbelow > 100 and rbelow > 100 and stage == "down":
                     stage = "up"
                     cnt += 1
                 cv2.rectangle(frame, (0, 0), (90, 80), (0, 0, 0), -1)
