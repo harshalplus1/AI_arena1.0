@@ -4,9 +4,7 @@ import cv2
 import numpy as np
 import math
 import mediapipe as mp
-import time
 import subprocess
-import datetime
 import random
 
 
@@ -58,7 +56,7 @@ class FaceRecognition:
         try:
             face_encoding = face_recognition.face_encodings(face_image)[0]
         except IndexError as e:
-            print(e)
+            print(f"Face Not visible. Error: {e}.")
             sys.exit(1)
 
         self.known_face_encodings.append(face_encoding)
@@ -167,7 +165,6 @@ class FaceRecognition:
             self.process_current_frame = not self.process_current_frame
 
             # Display the results
-            check=""
             for (top, right, bottom, left), name in zip(self.face_locations, self.face_names):
                 # Scale back up face locations since the frame we detected in was scaled to 1/4 size
                 top *= 4
@@ -196,7 +193,7 @@ class FaceRecognition:
     
     def register(self,frame):
         #insert name entered from the app
-        image_filename = f"{random.randint(0,100)}.png"
+        image_filename = f"{random.randint(0,100000)}.png"
         image_path = os.path.join("faces", image_filename)
         cv2.imwrite(image_path, frame)
         print(f"Image saved at: {image_path}")
