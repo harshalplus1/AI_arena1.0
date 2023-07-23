@@ -173,7 +173,7 @@ def main():
                 output_frame, langle, posture_angle = barbellrowutil(frame)
                 if langle > 150:
                     stage = "back"
-                if langle < 108 and stage == "back":
+                if langle < 108 and stage == "back" and posture_angle > 10 and posture_angle < 30 :
                     stage = "front"
                     cnt += 1
                 cv2.rectangle(frame, (0, 0), (90, 80), (0, 0, 0), -1)
