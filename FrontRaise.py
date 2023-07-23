@@ -214,7 +214,7 @@ def main():
                 output_frame, rangle, langle = frontraiseutils(frame)
                 if rangle < 15 and langle < 15:
                     stage = "down"
-                if rangle > 45 and langle > 45 and stage == "down":
+                if rangle > 50 and langle > 50 and stage == "down":
                     stage = "up"
                     cnt += 1
                 cv2.rectangle(frame, (0, 0), (90, 80), (0, 0, 0), -1)
