@@ -44,6 +44,10 @@ def shoulderpressutils(frame):
             landmarks[mp_pose.PoseLandmark.LEFT_WRIST.value].x,
             landmarks[mp_pose.PoseLandmark.LEFT_WRIST.value].y,
         ]
+        lhip = [
+            landmarks[mp_pose.PoseLandmark.LEFT_HIP.value].x,
+            landmarks[mp_pose.PoseLandmark.LEFT_HIP.value].y,
+        ]
         # Specify RIGHT shoulder, elbow, and wrist landmark indices
         r_shoulder = landmarks[mp_pose.PoseLandmark.RIGHT_SHOULDER.value]
         r_elbow = landmarks[mp_pose.PoseLandmark.RIGHT_ELBOW.value]
@@ -60,6 +64,10 @@ def shoulderpressutils(frame):
             landmarks[mp_pose.PoseLandmark.RIGHT_WRIST.value].x,
             landmarks[mp_pose.PoseLandmark.RIGHT_WRIST.value].y,
         ]
+        rhip = [
+            landmarks[mp_pose.PoseLandmark.LEFT_HIP.value].x,
+            landmarks[mp_pose.PoseLandmark.LEFT_HIP.value].y,
+        ]
         # Get frame dimensions
 
         # Convert LEFT landmark positions to pixel coordinates
@@ -67,11 +75,13 @@ def shoulderpressutils(frame):
         lelbow_x, lelbow_y = int(l_elbow.x * w), int(l_elbow.y * h)
         lwrist_x, lwrist_y = int(l_wrist.x * w), int(l_wrist.y * h)
         langle = calculate_angle(lsh, lel, lwr)
+        lpos=calculate_angle(lel,lsh,lhip)
         # Convert RIGHT landmark positions to pixel coordinates
         rshoulder_x, rshoulder_y = int(r_shoulder.x * w), int(r_shoulder.y * h)
         relbow_x, relbow_y = int(r_elbow.x * w), int(r_elbow.y * h)
         rwrist_x, rwrist_y = int(r_wrist.x * w), int(r_wrist.y * h)
         rangle = calculate_angle(rsh, rel, rwr)
+        rpos=calculate_angle(rel,rsh,rhip)
         cv2.line(
             frame, (lshoulder_x, lshoulder_y), (lelbow_x, lelbow_y), (0, 255, 0), 5
         )
@@ -110,7 +120,7 @@ def shoulderpressutils(frame):
         cv2.circle(frame, (relbow_x, relbow_y), 5, (255, 0, 0), -1)
         cv2.circle(frame, (rwrist_x, rwrist_y), 5, (255, 0, 0), -1)
 
-    return [frame, rangle, langle]
+    return [frame, rangle, langle, lpos, rpos]
 
 
 def start(frame,x,y):
@@ -176,11 +186,11 @@ def main():
         # Process the frame and draw lines
         if flag==1:
             try:
-                output_frame, rangle, langle = shoulderpressutils(frame)
-                if rangle > 140 and langle > 140:
-                    stage = "down"
-                if rangle < 70 and langle < 70 and stage == "down":
+                output_frame, rangle, langle, lpos, rpos = shoulderpressutils(frame)
+                if rangle > 140 and langle > 140 and lpos >150 and rpos > 150:
                     stage = "up"
+                if rangle < 70 and langle < 70 and lpos < 110 and rpos < 110 and stage == "up":
+                    stage = "down"
                     cnt += 1
                 cv2.rectangle(frame, (0, 0), (90, 80), (0, 0, 0), -1)
                 cv2.putText(
