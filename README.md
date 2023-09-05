@@ -37,6 +37,4 @@ Technologies used in the project:
 
 *   OpenCV
 *   Mediapipe
-*   Computer Vision and Posture Recognition
-*   Hand Tracking (Index Finger)
 *   Face Recognition
